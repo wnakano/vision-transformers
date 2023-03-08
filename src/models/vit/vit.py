@@ -2,9 +2,7 @@
 import torch
 import torch.nn as nn
 
-from einops import repeat
-from einops.layers.torch import Reduce
-from typing import Tuple
+from typing import Literal, Tuple
 
 from embeddings import Embeddings
 from transformer import EncoderTransformer
@@ -22,7 +20,8 @@ class ViT(nn.Module):
         num_channels: int = 3,
         dim_head: int = 64,
         dropout: float = .0,
-        emb_dropout: float = .0
+        emb_dropout: float = .0,
+        act_fn: Literal["GELU", "ReLU", "SELU"] = "GELU"
         ) -> None:
         super().__init__()
 
@@ -48,7 +47,8 @@ class ViT(nn.Module):
             heads=heads,
             dim_head=dim_head,
             inner_dim_scale=inner_dim_scale,
-            dropout=dropout
+            dropout=dropout,
+            act_fn=act_fn
         )
 
         self.head = ClsHead(
@@ -73,6 +73,7 @@ if __name__ == "__main__":
         num_classes=5,
         num_channels=3,
         depth=10,
-        heads=12
+        heads=12,
+        act_fn="ReLU"
     )
     y = vit(x)
